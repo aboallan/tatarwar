@@ -1,0 +1,78 @@
+<?php
+session_start();
+
+require_once __DIR__ . '/data.php';
+
+if (isset($_SESSION['user']['id'])) {
+    header('Location: dashboard.php');
+    exit;
+}
+
+$flash = $_SESSION['flash'] ?? [];
+unset($_SESSION['flash']);
+?>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meeting Brief Platform · Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="app app--auth page--login">
+    <div class="app__backdrop" aria-hidden="true"></div>
+    <header class="app-header app-header--compact">
+        <div class="app-header__brand">
+            <span class="app-header__icon">🗂️</span>
+            <div>
+                <strong>Institutional Coordination Hub</strong>
+                <span>Comprehensive Meeting Brief 2024</span>
+            </div>
+        </div>
+        <nav class="app-header__nav">
+            <a href="index.php">Overview</a>
+            <a href="register.php">Create Account</a>
+        </nav>
+    </header>
+
+    <?php if (!empty($flash)): ?>
+        <aside class="toast toast--<?= htmlspecialchars($flash['type'], ENT_QUOTES, 'UTF-8') ?>" role="alert">
+            <div class="toast__header">
+                <strong><?= htmlspecialchars($flash['title'], ENT_QUOTES, 'UTF-8') ?></strong>
+                <button type="button" class="toast__close" data-dismiss-toast aria-label="Close">×</button>
+            </div>
+            <p><?= htmlspecialchars($flash['message'], ENT_QUOTES, 'UTF-8') ?></p>
+        </aside>
+    <?php endif; ?>
+
+    <main class="auth-shell">
+        <section class="auth auth--standalone" aria-labelledby="sign-in-heading">
+            <header class="auth__header">
+                <h1 id="sign-in-heading">Sign in to continue</h1>
+                <p>Enter your credentials to retrieve your accreditation code and manage attendance responses.</p>
+            </header>
+            <form action="auth.php" method="post" class="auth__form">
+                <input type="hidden" name="action" value="login">
+                <div class="field">
+                    <label for="login-email">Email address</label>
+                    <input id="login-email" name="email" type="email" autocomplete="email" required>
+                </div>
+                <div class="field">
+                    <label for="login-password">Password</label>
+                    <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="btn btn--primary btn--full">Sign In</button>
+            </form>
+            <footer class="auth__footer">
+                <span>Need an account?</span>
+                <a class="link" href="register.php">Create one now</a>
+            </footer>
+        </section>
+    </main>
+
+    <script src="script.js" defer></script>
+</body>
+</html>
