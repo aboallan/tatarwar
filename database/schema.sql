@@ -29,6 +29,20 @@ CREATE TABLE IF NOT EXISTS notifications (
     CONSTRAINT fk_notifications_tasks FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE IF NOT EXISTS calendar_events (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    task_id INT NULL,
+    department_id INT NOT NULL,
+    title VARCHAR(180) NOT NULL,
+    event_date DATE NOT NULL,
+    priority VARCHAR(20) DEFAULT 'Medium',
+    status VARCHAR(30) DEFAULT 'Scheduled',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    KEY idx_calendar_event_date (event_date),
+    CONSTRAINT fk_calendar_events_tasks FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE SET NULL,
+    CONSTRAINT fk_calendar_events_departments FOREIGN KEY (department_id) REFERENCES departments(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 INSERT INTO departments (name) VALUES
     ('Office of the Secretary General'),
     ('General Department of Information Technology'),
@@ -156,4 +170,72 @@ WHERE t.title = 'Emergency Drill Readiness'
   AND d.name = 'General Department of Operations and Emergencies'
   AND NOT EXISTS (
       SELECT 1 FROM notifications n WHERE n.task_id = t.id
+  );
+
+INSERT INTO calendar_events (task_id, department_id, title, event_date, priority, status)
+SELECT t.id, t.department_id, CONCAT(t.title, ' Deadline'), t.due_date, t.priority, t.status
+FROM tasks t
+WHERE t.due_date IS NOT NULL
+  AND NOT EXISTS (
+      SELECT 1 FROM calendar_events ce WHERE ce.task_id = t.id
+  );
+
+INSERT INTO calendar_events (department_id, title, event_date, priority, status)
+SELECT d.id, 'Employee Onboarding Workshop', DATE_FORMAT(CURDATE(), '%Y-%m-05'), 'Medium', 'Scheduled'
+FROM departments d
+WHERE d.name = 'Office of the Secretary General'
+  AND NOT EXISTS (
+      SELECT 1 FROM calendar_events ce WHERE ce.title = 'Employee Onboarding Workshop'
+        AND ce.event_date = DATE_FORMAT(CURDATE(), '%Y-%m-05')
+        AND ce.department_id = d.id
+  );
+
+INSERT INTO calendar_events (department_id, title, event_date, priority, status)
+SELECT d.id, 'Mobile App Beta Check-in', DATE_FORMAT(CURDATE(), '%Y-%m-12'), 'High', 'In Progress'
+FROM departments d
+WHERE d.name = 'General Department of Information Technology'
+  AND NOT EXISTS (
+      SELECT 1 FROM calendar_events ce WHERE ce.title = 'Mobile App Beta Check-in'
+        AND ce.event_date = DATE_FORMAT(CURDATE(), '%Y-%m-12')
+        AND ce.department_id = d.id
+  );
+
+INSERT INTO calendar_events (department_id, title, event_date, priority, status)
+SELECT d.id, 'Quarterly Plan Review', DATE_FORMAT(CURDATE(), '%Y-%m-17'), 'Medium', 'Scheduled'
+FROM departments d
+WHERE d.name = 'Central Unit for Plan Approval'
+  AND NOT EXISTS (
+      SELECT 1 FROM calendar_events ce WHERE ce.title = 'Quarterly Plan Review'
+        AND ce.event_date = DATE_FORMAT(CURDATE(), '%Y-%m-17')
+        AND ce.department_id = d.id
+  );
+
+INSERT INTO calendar_events (department_id, title, event_date, priority, status)
+SELECT d.id, 'Brand Refresh Showcase', DATE_FORMAT(CURDATE(), '%Y-%m-21'), 'Medium', 'Scheduled'
+FROM departments d
+WHERE d.name = 'Investment Agency'
+  AND NOT EXISTS (
+      SELECT 1 FROM calendar_events ce WHERE ce.title = 'Brand Refresh Showcase'
+        AND ce.event_date = DATE_FORMAT(CURDATE(), '%Y-%m-21')
+        AND ce.department_id = d.id
+  );
+
+INSERT INTO calendar_events (department_id, title, event_date, priority, status)
+SELECT d.id, 'Safety Compliance Walkthrough', DATE_FORMAT(CURDATE(), '%Y-%m-24'), 'High', 'Scheduled'
+FROM departments d
+WHERE d.name = 'Department of Safety and Security'
+  AND NOT EXISTS (
+      SELECT 1 FROM calendar_events ce WHERE ce.title = 'Safety Compliance Walkthrough'
+        AND ce.event_date = DATE_FORMAT(CURDATE(), '%Y-%m-24')
+        AND ce.department_id = d.id
+  );
+
+INSERT INTO calendar_events (department_id, title, event_date, priority, status)
+SELECT d.id, 'Green Corridor Site Visit', DATE_FORMAT(CURDATE(), '%Y-%m-28'), 'Low', 'Planned'
+FROM departments d
+WHERE d.name = 'General Department of Gardens and Landscaping'
+  AND NOT EXISTS (
+      SELECT 1 FROM calendar_events ce WHERE ce.title = 'Green Corridor Site Visit'
+        AND ce.event_date = DATE_FORMAT(CURDATE(), '%Y-%m-28')
+        AND ce.department_id = d.id
   );

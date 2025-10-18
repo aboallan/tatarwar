@@ -4,6 +4,8 @@ A lightweight web portal for coordinating departmental work. The interface is bu
 
 ## Key features
 - Dashboard with quick metrics, upcoming deadlines, and reminder history.
+- Dedicated new-task workspace for capturing assignments with guidance and shortcuts.
+- Calendar view that visualises deadlines across departments with colour-coded priorities.
 - Full CRUD workflow for departmental tasks (create, update status, delete).
 - Department directory with optional contact email and automatic seeding of the provided fourteen departments.
 - Reminder logging endpoint to record when a follow-up notification is sent.
@@ -17,7 +19,7 @@ A lightweight web portal for coordinating departmental work. The interface is bu
 ## Getting started with MAMP
 1. Copy the project into your MAMP web directory (typically `/Applications/MAMP/htdocs`).
 2. Open phpMyAdmin through `http://localhost/phpMyAdmin`.
-3. Import the database schema located at `database/schema.sql`. It creates tables, seeds the fourteen departments, and loads a curated sample data set so dashboards and reminders are populated immediately.
+3. Import the database schema located at `database/schema.sql`. It creates tables, seeds the fourteen departments, and loads curated sample data (including calendar events) so dashboards, boards, and the calendar are populated immediately.
 4. Update the connection values in `db.php` if your credentials differ. The defaults are:
    - Username: `root`
    - Password: `root`
@@ -28,6 +30,7 @@ A lightweight web portal for coordinating departmental work. The interface is bu
 - `departments`: stores department names and optional email contacts.
 - `tasks`: tracks task details, responsible department, priority, status, and due date.
 - `notifications`: records reminder messages tied to tasks.
+- `calendar_events`: stores calendar items that power the new monthly schedule view.
 
 ## Project structure
 ```
@@ -46,6 +49,8 @@ A lightweight web portal for coordinating departmental work. The interface is bu
 ├── db.php
 ├── index.php
 ├── tasks.php
+├── task_create.php
+├── calendar.php
 ├── departments.php
 └── README.md
 ```
@@ -56,6 +61,7 @@ A lightweight web portal for coordinating departmental work. The interface is bu
 - Modify the `departments.php` form to capture additional metadata as required.
 
 ## Design highlights
-- **Hero workspace shell:** layered gradient header with live status chip and quick access to navigation plus a new task shortcut.
+- **Hero workspace shell:** layered linear-gradient background with live status chip and quick access to navigation plus a new task shortcut.
 - **Insight overview cards:** reusable components show task health, overdue counts, and department activity in a glanceable grid.
+- **Calendar-first visibility:** colour-coded events highlight due dates by department alongside quick stats, mirroring modern productivity suites.
 - **Elevated data tables:** floating rows, pill badges, and accent chips make task priorities and statuses readable across devices.

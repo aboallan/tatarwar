@@ -29,8 +29,9 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <nav class="sidebar-nav" role="navigation">
                 <a href="index.php" class="nav-link <?= $currentPage === 'index.php' ? 'active' : ''; ?>">Dashboard</a>
                 <a href="tasks.php" class="nav-link <?= $currentPage === 'tasks.php' ? 'active' : ''; ?>">Tasks</a>
+                <a href="task_create.php" class="nav-link <?= $currentPage === 'task_create.php' ? 'active' : ''; ?>">New Task</a>
                 <a href="departments.php" class="nav-link <?= $currentPage === 'departments.php' ? 'active' : ''; ?>">Departments</a>
-                <span class="nav-link muted" aria-disabled="true">Calendar</span>
+                <a href="calendar.php" class="nav-link <?= $currentPage === 'calendar.php' ? 'active' : ''; ?>">Calendar</a>
             </nav>
             <div class="sidebar-footer">
                 <strong>Workspace tips</strong><br>
@@ -52,7 +53,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
                         <span class="status-dot"></span>
                         Synced <?= sanitize($workspaceUpdatedAt); ?>
                     </span>
-                    <a href="tasks.php" class="primary-action">Create task</a>
+                    <a href="task_create.php" class="primary-action">Create task</a>
                 </div>
             </header>
             <main class="page-content">
