@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../includes/functions.php';
 
-$pageTitle = $pageTitle ?? 'Task Management Hub';
+$pageTitle = $pageTitle ?? 'Task Management Hail Region Municipality';
 $pageDescription = $pageDescription ?? 'Coordinate departmental workstreams in one place.';
 $workspaceUpdatedAt = date('M j, Y');
 $requireAuth = $requireAuth ?? true;
@@ -32,10 +32,10 @@ $userRole = isset($currentUser['role']) ? user_role_label($currentUser['role']) 
     <div class="app-shell">
         <aside class="sidebar" aria-label="Primary">
             <div class="sidebar-brand">
-                <span class="brand-icon" aria-hidden="true">TM</span>
+                <span class="brand-icon" aria-hidden="true">HM</span>
                 <div class="brand-copy">
-                    <span class="brand-title">TaskMaster</span>
-                    <span class="brand-subtitle">City Coordination</span>
+                    <span class="brand-title">Task Management</span>
+                    <span class="brand-subtitle">Hail Region Municipality</span>
                 </div>
             </div>
             <nav class="sidebar-nav" role="navigation">
@@ -54,8 +54,8 @@ $userRole = isset($currentUser['role']) ? user_role_label($currentUser['role']) 
         <div class="main-area">
             <header class="topbar">
                 <div class="topbar-brand">
-                    <span class="topbar-eyebrow">City Task Office</span>
-                    <strong>TaskMaster Console</strong>
+                    <span class="topbar-eyebrow">Municipality Workspace</span>
+                    <strong>Task Management · Hail Region</strong>
                 </div>
                 <div class="topbar-actions">
                     <span class="status-pill" role="status">

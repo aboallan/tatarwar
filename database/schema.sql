@@ -12,9 +12,9 @@ CREATE TABLE IF NOT EXISTS users (
 
 INSERT INTO users (name, email, password_hash, role)
 VALUES
-    ('Amina Al-Faisal', 'president@taskmaster.test', '$2y$12$j65mli2D4LRBmSjRqekwbe6BETddZniVqrQSrPq7XI7P4m1qPMwLG', 'president'),
-    ('Omar Al-Hassan', 'manager@taskmaster.test', '$2y$12$KfuNnAYsRc5iWGUJV5omBu8nRfxcRLXlGgyIXoPKzQ/O..cuEqUBW', 'manager'),
-    ('Layla Al-Salem', 'employee@taskmaster.test', '$2y$12$r4o2bbtALudjyN/x0z0jX.LaNQT12Y0RD45HV0NBCfshr1hJi3fGy', 'employee')
+    ('Amina Al-Faisal', 'president@hailtasks.test', '$2y$12$j65mli2D4LRBmSjRqekwbe6BETddZniVqrQSrPq7XI7P4m1qPMwLG', 'president'),
+    ('Omar Al-Hassan', 'manager@hailtasks.test', '$2y$12$KfuNnAYsRc5iWGUJV5omBu8nRfxcRLXlGgyIXoPKzQ/O..cuEqUBW', 'manager'),
+    ('Layla Al-Salem', 'employee@hailtasks.test', '$2y$12$r4o2bbtALudjyN/x0z0jX.LaNQT12Y0RD45HV0NBCfshr1hJi3fGy', 'employee')
 ON DUPLICATE KEY UPDATE
     name = VALUES(name),
     password_hash = VALUES(password_hash),

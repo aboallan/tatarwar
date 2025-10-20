@@ -49,16 +49,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign in · TaskMaster</title>
+    <title>Sign in · Task Management Hail Region Municipality</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="auth-page">
-    <div class="auth-card">
-        <h1>Sign in</h1>
-        <p>Access the TaskMaster console.</p>
+    <div class="auth-wrapper">
+        <section class="auth-intro">
+            <span class="auth-badge">Task Management · Hail Region Municipality</span>
+            <h1>Streamline your department tasks</h1>
+            <p>Assign work, track deadlines, and collaborate smoothly across the Hail Region teams.</p>
+            <ul>
+                <li>Real-time deadline notifications</li>
+                <li>Cross-department collaboration</li>
+                <li>Structured approval workflows</li>
+            </ul>
+        </section>
+        <div class="auth-card">
+            <h2>Welcome back</h2>
+            <p>Sign in to continue coordinating tasks.</p>
         <?php if ($registeredMessage): ?>
             <div class="alert success"><?= sanitize($registeredMessage); ?></div>
         <?php endif; ?>
@@ -81,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="auth-actions">
             <span class="auth-note">Need an account?</span>
             <a href="register.php" class="ghost-action">Create one</a>
+        </div>
         </div>
     </div>
 </body>

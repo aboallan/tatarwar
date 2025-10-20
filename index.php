@@ -1,6 +1,6 @@
 <?php
 $pageTitle = 'Dashboard';
-$pageDescription = 'A classic control room for city task coordination.';
+$pageDescription = 'Monitor cross-department tasks, upcoming deadlines, and reminder activity.';
 require_once __DIR__ . '/includes/functions.php';
 require_login();
 require_once __DIR__ . '/db.php';
@@ -20,26 +20,55 @@ $departmentPerformance = $pdo->query("SELECT d.name,\n    COUNT(t.id) AS total_t
 
 include __DIR__ . '/includes/header.php';
 ?>
+<?php if ($upcomingTasks): ?>
+    <section class="page-alert deadline-alert" role="alert">
+        <div class="alert-icon" aria-hidden="true">⚠️</div>
+        <div class="alert-body">
+            <h2>You have <?= count($upcomingTasks); ?> task<?= count($upcomingTasks) === 1 ? '' : 's'; ?> with upcoming deadlines</h2>
+            <ul class="alert-list">
+                <?php foreach ($upcomingTasks as $task): ?>
+                    <li>
+                        <span class="alert-task-title"><?= sanitize($task['title']); ?></span>
+                        <span class="alert-meta"><?= sanitize($task['department_name']); ?> · Due <?= sanitize(format_date($task['due_date'])); ?></span>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    </section>
+<?php endif; ?>
+
 <section class="summary-cards">
     <article class="summary-card">
-        <span class="summary-label">Total tasks</span>
-        <span class="summary-value"><?= number_format($totalTasks); ?></span>
-        <span class="summary-footnote">Across <?= number_format($departmentCount); ?> departments</span>
+        <span class="summary-icon" aria-hidden="true">🏢</span>
+        <div>
+            <span class="summary-label">Departments</span>
+            <span class="summary-value"><?= number_format($departmentCount); ?></span>
+        </div>
+        <span class="summary-footnote">Actively coordinated</span>
     </article>
     <article class="summary-card">
-        <span class="summary-label">In progress</span>
-        <span class="summary-value"><?= number_format($inProgressTasks); ?></span>
+        <span class="summary-icon" aria-hidden="true">🗂️</span>
+        <div>
+            <span class="summary-label">Total tasks</span>
+            <span class="summary-value"><?= number_format($totalTasks); ?></span>
+        </div>
         <span class="summary-footnote"><?= number_format($completedTasks); ?> completed</span>
     </article>
     <article class="summary-card">
-        <span class="summary-label">Overdue items</span>
-        <span class="summary-value"><?= number_format($overdueTasks); ?></span>
-        <span class="summary-footnote">Needing follow-up</span>
+        <span class="summary-icon" aria-hidden="true">🚀</span>
+        <div>
+            <span class="summary-label">In progress</span>
+            <span class="summary-value"><?= number_format($inProgressTasks); ?></span>
+        </div>
+        <span class="summary-footnote">Tracked this week</span>
     </article>
     <article class="summary-card">
-        <span class="summary-label">Departments tracked</span>
-        <span class="summary-value"><?= number_format($departmentCount); ?></span>
-        <span class="summary-footnote">Active city divisions</span>
+        <span class="summary-icon" aria-hidden="true">⏰</span>
+        <div>
+            <span class="summary-label">Overdue</span>
+            <span class="summary-value"><?= number_format($overdueTasks); ?></span>
+        </div>
+        <span class="summary-footnote">Needs attention</span>
     </article>
 </section>
 
@@ -48,7 +77,7 @@ include __DIR__ . '/includes/header.php';
         <section class="panel classic-panel">
             <header class="panel-header">
                 <h2>Upcoming deadlines</h2>
-                <span><?= $upcomingTasks ? count($upcomingTasks) : 0; ?> items scheduled</span>
+                <span><?= $upcomingTasks ? count($upcomingTasks) : 0; ?> scheduled</span>
             </header>
             <?php if (!$upcomingTasks): ?>
                 <div class="empty-note">No upcoming due dates on the books.</div>
@@ -124,18 +153,10 @@ include __DIR__ . '/includes/header.php';
         </section>
     </div>
     <aside class="column-side">
-        <?php if ($overdueTasks > 0): ?>
-            <section class="panel attention-panel">
-                <h2>Overdue follow-up</h2>
-                <p><?= number_format($overdueTasks); ?> assignments need intervention. Review the task list to re-align owners and deadlines.</p>
-                <a href="tasks.php" class="ghost-action">Go to tasks</a>
-            </section>
-        <?php endif; ?>
-
         <section class="panel classic-panel">
             <header class="panel-header">
                 <h2>Reminder activity</h2>
-                <span>Recent notices</span>
+                <span>Latest notices</span>
             </header>
             <?php if (!$recentReminders): ?>
                 <div class="empty-note">No reminders have been issued yet.</div>
@@ -151,6 +172,14 @@ include __DIR__ . '/includes/header.php';
                 </ul>
             <?php endif; ?>
         </section>
+
+        <?php if ($overdueTasks > 0): ?>
+            <section class="panel attention-panel">
+                <h2>Overdue follow-up</h2>
+                <p><?= number_format($overdueTasks); ?> assignments need intervention. Review the task list to re-align owners and deadlines.</p>
+                <a href="tasks.php" class="ghost-action">Review tasks</a>
+            </section>
+        <?php endif; ?>
     </aside>
 </div>
 <?php include __DIR__ . '/includes/footer.php'; ?>

@@ -1,4 +1,4 @@
-# Department TaskMaster Suite
+# Task Management · Hail Region Municipality
 
 A classic, data-focused portal for coordinating departmental work. The interface uses HTML, CSS, and vanilla JavaScript, while PHP powers the backend against a MySQL database (fully compatible with MAMP on macOS).
 
@@ -25,9 +25,9 @@ A classic, data-focused portal for coordinating departmental work. The interface
    - Database: `task_manager`
 5. Start MAMP servers and visit `http://localhost/tatarwar/login.php` (or the folder name you chose).
 6. Sign in with one of the seeded accounts or create a new one from the registration page.
-   - President: `president@taskmaster.test` / `president123`
-   - Manager: `manager@taskmaster.test` / `manager123`
-   - Employee: `employee@taskmaster.test` / `employee123`
+   - President: `president@hailtasks.test` / `president123`
+   - Manager: `manager@hailtasks.test` / `manager123`
+   - Employee: `employee@hailtasks.test` / `employee123`
 
 ## Database structure
 - `users`: authentication table with role, hashed password, and audit timestamps.

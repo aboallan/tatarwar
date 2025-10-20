@@ -1,6 +1,6 @@
 <?php
 $pageTitle = 'Reminders';
-$pageDescription = 'Issue and review reminders for departmental tasks.';
+$pageDescription = 'Send timely nudges and track reminder history by department.';
 require_once __DIR__ . '/includes/functions.php';
 require_login();
 require_once __DIR__ . '/db.php';
@@ -50,11 +50,11 @@ include __DIR__ . '/includes/header.php';
         <?= implode('<br>', array_map('sanitize', $errors)); ?>
     </div>
 <?php endif; ?>
-<div class="content-columns">
-    <section class="panel classic-panel">
-        <header class="panel-header">
+<section class="reminders-layout">
+    <aside class="panel reminder-compose">
+        <header>
             <h2>Create reminder</h2>
-            <span>Send a prompt to the owning department</span>
+            <p>Send a quick prompt to keep tasks on schedule.</p>
         </header>
         <form method="post" class="classic-form">
             <div class="form-group">
@@ -70,17 +70,19 @@ include __DIR__ . '/includes/header.php';
             </div>
             <div class="form-group">
                 <label for="message">Reminder message</label>
-                <textarea id="message" name="message" rows="4" placeholder="Share the next steps or highlight the approaching deadline." required><?= isset($_POST['message']) ? sanitize($_POST['message']) : ''; ?></textarea>
+                <textarea id="message" name="message" rows="5" placeholder="Highlight the actions needed or the approaching deadline." required><?= isset($_POST['message']) ? sanitize($_POST['message']) : ''; ?></textarea>
             </div>
             <div class="form-actions">
                 <button type="submit" class="primary-action">Send reminder</button>
             </div>
         </form>
-    </section>
-    <section class="panel classic-panel">
+    </aside>
+    <div class="panel reminder-log">
         <header class="panel-header">
-            <h2>Reminder log</h2>
-            <span>Latest notifications</span>
+            <div>
+                <h2>Reminder log</h2>
+                <span>Latest notifications</span>
+            </div>
         </header>
         <?php if (!$reminders): ?>
             <div class="empty-note">No reminders have been logged yet.</div>
@@ -108,6 +110,6 @@ include __DIR__ . '/includes/header.php';
                 </table>
             </div>
         <?php endif; ?>
-    </section>
-</div>
+    </div>
+</section>
 <?php include __DIR__ . '/includes/footer.php'; ?>
