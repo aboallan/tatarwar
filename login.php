@@ -56,46 +56,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="auth-page">
-    <div class="auth-wrapper">
-        <section class="auth-intro">
-            <span class="auth-badge">Task Management · Hail Region Municipality</span>
-            <h1>Streamline your department tasks</h1>
-            <p>Assign work, track deadlines, and collaborate smoothly across the Hail Region teams.</p>
-            <ul>
-                <li>Real-time deadline notifications</li>
-                <li>Cross-department collaboration</li>
-                <li>Structured approval workflows</li>
-            </ul>
+    <div class="auth-shell">
+        <section class="auth-illustration">
+            <div class="auth-illustration-inner">
+                <img class="auth-masthead-logo" src="assets/img/hail-region-municipality-logo.svg" alt="Task Management Hail Region Municipality">
+                <h1>Task Management · Hail Region Municipality</h1>
+                <p>Coordinate president, manager, and employee workflows in one classic command center.</p>
+            </div>
         </section>
-        <div class="auth-card">
-            <div class="auth-logo">
-                <img src="assets/img/hail-region-municipality-logo.svg" alt="Hail Region Municipality logo">
+        <div class="auth-panel">
+            <header class="auth-panel-header">
+                <div class="auth-logo">
+                    <img src="assets/img/hail-region-municipality-logo.svg" alt="Hail Region Municipality logo">
+                </div>
+                <div>
+                    <h2>Sign in to continue</h2>
+                    <p>Access the Task Management Hail Region Municipality workspace.</p>
+                </div>
+            </header>
+            <div class="auth-panel-body">
+                <?php if ($registeredMessage): ?>
+                    <div class="alert success"><?= sanitize($registeredMessage); ?></div>
+                <?php endif; ?>
+                <?php if ($errors): ?>
+                    <div class="alert error"><?= implode('<br>', array_map('sanitize', $errors)); ?></div>
+                <?php endif; ?>
+                <form method="post" class="classic-form" novalidate>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="<?= sanitize($email); ?>" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="primary-action">Sign in</button>
+                    </div>
+                </form>
             </div>
-            <h2>Welcome back</h2>
-            <p>Sign in to continue coordinating tasks.</p>
-        <?php if ($registeredMessage): ?>
-            <div class="alert success"><?= sanitize($registeredMessage); ?></div>
-        <?php endif; ?>
-        <?php if ($errors): ?>
-            <div class="alert error"><?= implode('<br>', array_map('sanitize', $errors)); ?></div>
-        <?php endif; ?>
-        <form method="post" class="classic-form" novalidate>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="<?= sanitize($email); ?>" required>
+            <div class="auth-actions">
+                <span class="auth-note">Need an account?</span>
+                <a href="register.php" class="ghost-action">Create one</a>
             </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <div class="form-actions">
-                <button type="submit" class="primary-action">Sign in</button>
-            </div>
-        </form>
-        <div class="auth-actions">
-            <span class="auth-note">Need an account?</span>
-            <a href="register.php" class="ghost-action">Create one</a>
-        </div>
         </div>
     </div>
 </body>

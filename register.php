@@ -80,57 +80,60 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body class="auth-page">
-    <div class="auth-wrapper">
-        <section class="auth-intro">
-            <span class="auth-badge">Task Management · Hail Region Municipality</span>
-            <h1>Create a collaborative workspace</h1>
-            <p>Give every department visibility from planning through delivery with shared milestones.</p>
-            <ul>
-                <li>Role-based access for presidents, managers, and employees</li>
-                <li>Deadline-driven calendar and reminder center</li>
-                <li>Unified progress and completion reporting</li>
-            </ul>
-        </section>
-        <div class="auth-card">
-            <div class="auth-logo">
-                <img src="assets/img/hail-region-municipality-logo.svg" alt="Hail Region Municipality logo">
+    <div class="auth-shell">
+        <section class="auth-illustration">
+            <div class="auth-illustration-inner">
+                <img class="auth-masthead-logo" src="assets/img/hail-region-municipality-logo.svg" alt="Task Management Hail Region Municipality">
+                <h1>Join Task Management Hail Region Municipality</h1>
+                <p>Empower municipal teams with a classic workspace that reflects the official identity.</p>
             </div>
-            <h2>Register</h2>
-            <p>Invite your team to manage tasks together.</p>
-            <?php if ($errors): ?>
-                <div class="alert error"><?= implode('<br>', array_map('sanitize', $errors)); ?></div>
-            <?php endif; ?>
-            <form method="post" class="classic-form" novalidate>
-                <div class="form-group">
-                    <label for="name">Full name</label>
-                    <input type="text" id="name" name="name" value="<?= sanitize($formData['name']); ?>" required>
+        </section>
+        <div class="auth-panel">
+            <header class="auth-panel-header">
+                <div class="auth-logo">
+                    <img src="assets/img/hail-region-municipality-logo.svg" alt="Hail Region Municipality logo">
                 </div>
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" value="<?= sanitize($formData['email']); ?>" required>
+                <div>
+                    <h2>Create your account</h2>
+                    <p>Select your role to tailor the dashboard experience.</p>
                 </div>
-                <div class="form-row">
+            </header>
+            <div class="auth-panel-body">
+                <?php if ($errors): ?>
+                    <div class="alert error"><?= implode('<br>', array_map('sanitize', $errors)); ?></div>
+                <?php endif; ?>
+                <form method="post" class="classic-form" novalidate>
                     <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
+                        <label for="name">Full name</label>
+                        <input type="text" id="name" name="name" value="<?= sanitize($formData['name']); ?>" required>
                     </div>
                     <div class="form-group">
-                        <label for="confirm_password">Confirm password</label>
-                        <input type="password" id="confirm_password" name="confirm_password" required>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" value="<?= sanitize($formData['email']); ?>" required>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="role">Select your role</label>
-                    <select id="role" name="role">
-                        <?php foreach ($roleOptions as $value => $label): ?>
-                            <option value="<?= $value; ?>" <?= $formData['role'] === $value ? 'selected' : ''; ?>><?= $label; ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="primary-action">Create account</button>
-                </div>
-            </form>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input type="password" id="password" name="password" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm_password">Confirm password</label>
+                            <input type="password" id="confirm_password" name="confirm_password" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Select your role</label>
+                        <select id="role" name="role">
+                            <?php foreach ($roleOptions as $value => $label): ?>
+                                <option value="<?= $value; ?>" <?= $formData['role'] === $value ? 'selected' : ''; ?>><?= $label; ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="primary-action">Create account</button>
+                    </div>
+                </form>
+            </div>
             <div class="auth-actions">
                 <span class="auth-note">Already registered?</span>
                 <a href="login.php" class="ghost-action">Sign in</a>

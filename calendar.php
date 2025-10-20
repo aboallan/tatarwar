@@ -158,10 +158,15 @@ include __DIR__ . '/includes/header.php';
                                 <?php
                                 $priorityClass = 'priority-' . strtolower($event['priority'] ?? 'medium');
                                 $tagClass = calendar_tag_class($event['department_name']);
+                                $statusLabel = $event['status'] ?? 'Pending';
+                                $statusClass = 'status-' . strtolower(str_replace(' ', '-', $statusLabel));
                                 ?>
                                 <article class="calendar-event <?= $tagClass; ?> <?= $priorityClass; ?>">
                                     <span class="event-title"><?= sanitize($event['title']); ?></span>
-                                    <span class="event-meta"><?= sanitize($event['department_name']); ?> · <?= sanitize($event['priority']); ?></span>
+                                    <span class="event-meta">
+                                        <span><?= sanitize($event['department_name']); ?> · <?= sanitize($event['priority']); ?></span>
+                                        <span class="status-chip <?= sanitize($statusClass); ?>"><?= sanitize($statusLabel); ?></span>
+                                    </span>
                                 </article>
                             <?php endforeach; ?>
                         <?php else: ?>

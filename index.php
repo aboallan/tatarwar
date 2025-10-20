@@ -153,7 +153,7 @@ include __DIR__ . '/includes/header.php';
         </section>
     </div>
     <aside class="column-side">
-        <section class="panel classic-panel">
+        <section class="panel classic-panel reminder-panel">
             <header class="panel-header">
                 <h2>Reminder activity</h2>
                 <span>Latest notices</span>
