@@ -1,8 +1,9 @@
 <?php
 $pageTitle = 'Calendar';
 $pageDescription = 'View all task deadlines in calendar format.';
-require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/includes/functions.php';
+require_login();
+require_once __DIR__ . '/db.php';
 
 $today = new DateTimeImmutable('today');
 $monthParam = $_GET['month'] ?? $today->format('Y-m');

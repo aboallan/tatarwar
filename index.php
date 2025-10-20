@@ -1,8 +1,9 @@
 <?php
 $pageTitle = 'Dashboard';
-$pageDescription = 'Overview of all departments and task assignments.';
-require_once __DIR__ . '/db.php';
+$pageDescription = 'A classic control room for city task coordination.';
 require_once __DIR__ . '/includes/functions.php';
+require_login();
+require_once __DIR__ . '/db.php';
 
 $totalTasks = (int)$pdo->query('SELECT COUNT(*) FROM tasks')->fetchColumn();
 $inProgressTasks = (int)$pdo->query("SELECT COUNT(*) FROM tasks WHERE status = 'In Progress'")->fetchColumn();
@@ -11,135 +12,145 @@ $overdueTasks = (int)$pdo->query("SELECT COUNT(*) FROM tasks WHERE status != 'Co
     ->fetchColumn();
 $departmentCount = (int)$pdo->query('SELECT COUNT(*) FROM departments')->fetchColumn();
 
-$upcomingTasks = $pdo->query("SELECT t.id, t.title, t.due_date, d.name AS department_name, t.priority\n    FROM tasks t\n    JOIN departments d ON d.id = t.department_id\n    WHERE t.status != 'Completed' AND t.due_date IS NOT NULL AND t.due_date >= CURDATE()\n    ORDER BY t.due_date ASC\n    LIMIT 6")->fetchAll();
+$upcomingTasks = $pdo->query("SELECT t.id, t.title, t.due_date, d.name AS department_name, t.priority\n    FROM tasks t\n    JOIN departments d ON d.id = t.department_id\n    WHERE t.status != 'Completed' AND t.due_date IS NOT NULL AND t.due_date >= CURDATE()\n    ORDER BY t.due_date ASC\n    LIMIT 8")->fetchAll();
 
-$recentReminders = $pdo->query("SELECT n.message, DATE_FORMAT(n.created_at, '%b %e, %Y %H:%i') AS created_at,\n    t.title AS task_title\n    FROM notifications n\n    JOIN tasks t ON t.id = n.task_id\n    ORDER BY n.created_at DESC\n    LIMIT 5")->fetchAll();
+$recentReminders = $pdo->query("SELECT n.message, DATE_FORMAT(n.created_at, '%b %e, %Y %H:%i') AS created_at,\n    t.title AS task_title\n    FROM notifications n\n    JOIN tasks t ON t.id = n.task_id\n    ORDER BY n.created_at DESC\n    LIMIT 6")->fetchAll();
 
-$departmentPerformance = $pdo->query("SELECT d.name,\n    COUNT(t.id) AS total_tasks,\n    SUM(CASE WHEN t.status = 'Completed' THEN 1 ELSE 0 END) AS completed_tasks,\n    SUM(CASE WHEN t.status = 'In Progress' THEN 1 ELSE 0 END) AS in_progress_tasks,\n    SUM(CASE WHEN t.due_date IS NOT NULL AND t.due_date < CURDATE() AND t.status != 'Completed' THEN 1 ELSE 0 END) AS overdue_tasks\n    FROM departments d\n    LEFT JOIN tasks t ON t.department_id = d.id\n    GROUP BY d.id\n    ORDER BY d.name ASC\n    LIMIT 6")->fetchAll();
+$departmentPerformance = $pdo->query("SELECT d.name,\n    COUNT(t.id) AS total_tasks,\n    SUM(CASE WHEN t.status = 'Completed' THEN 1 ELSE 0 END) AS completed_tasks,\n    SUM(CASE WHEN t.status = 'In Progress' THEN 1 ELSE 0 END) AS in_progress_tasks,\n    SUM(CASE WHEN t.due_date IS NOT NULL AND t.due_date < CURDATE() AND t.status != 'Completed' THEN 1 ELSE 0 END) AS overdue_tasks\n    FROM departments d\n    LEFT JOIN tasks t ON t.department_id = d.id\n    GROUP BY d.id\n    ORDER BY d.name ASC")->fetchAll();
 
 include __DIR__ . '/includes/header.php';
 ?>
-<section class="metrics-grid">
-    <article class="panel metric-card">
-        <span class="metric-label">Total Tasks</span>
-        <span class="metric-value"><?= number_format($totalTasks); ?></span>
-        <span class="metric-footnote">Across all departments</span>
+<section class="summary-cards">
+    <article class="summary-card">
+        <span class="summary-label">Total tasks</span>
+        <span class="summary-value"><?= number_format($totalTasks); ?></span>
+        <span class="summary-footnote">Across <?= number_format($departmentCount); ?> departments</span>
     </article>
-    <article class="panel metric-card">
-        <span class="metric-label">In Progress</span>
-        <span class="metric-value"><?= number_format($inProgressTasks); ?></span>
-        <span class="metric-footnote"><?= number_format($completedTasks); ?> completed</span>
+    <article class="summary-card">
+        <span class="summary-label">In progress</span>
+        <span class="summary-value"><?= number_format($inProgressTasks); ?></span>
+        <span class="summary-footnote"><?= number_format($completedTasks); ?> completed</span>
     </article>
-    <article class="panel metric-card">
-        <span class="metric-label">Overdue</span>
-        <span class="metric-value"><?= number_format($overdueTasks); ?></span>
-        <span class="metric-footnote">Requires attention</span>
+    <article class="summary-card">
+        <span class="summary-label">Overdue items</span>
+        <span class="summary-value"><?= number_format($overdueTasks); ?></span>
+        <span class="summary-footnote">Needing follow-up</span>
     </article>
-    <article class="panel metric-card">
-        <span class="metric-label">Departments</span>
-        <span class="metric-value"><?= number_format($departmentCount); ?></span>
-        <span class="metric-footnote">Active divisions</span>
+    <article class="summary-card">
+        <span class="summary-label">Departments tracked</span>
+        <span class="summary-value"><?= number_format($departmentCount); ?></span>
+        <span class="summary-footnote">Active city divisions</span>
     </article>
 </section>
 
-<?php if ($overdueTasks > 0): ?>
-    <section class="panel alert-card">
-        <div>
-            <h2>Overdue tasks need attention</h2>
-            <p><?= number_format($overdueTasks); ?> assignments have slipped beyond their due dates.</p>
-        </div>
-        <a href="tasks.php" class="link-button">Review tasks</a>
-    </section>
-<?php endif; ?>
-
-<section class="split-grid">
-    <article class="panel">
-        <div class="panel-header">
-            <h2>Upcoming Deadlines</h2>
-            <span class="panel-subtitle">Next <?= $upcomingTasks ? count($upcomingTasks) : 0; ?> due dates</span>
-        </div>
-        <?php if (!$upcomingTasks): ?>
-            <div class="empty-note">No upcoming due dates found.</div>
-        <?php else: ?>
-            <ul class="deadline-list">
-                <?php foreach ($upcomingTasks as $task): ?>
-                    <?php
-                    $priorityClass = strtolower($task['priority']);
-                    if (!in_array($priorityClass, ['high', 'medium', 'low'], true)) {
-                        $priorityClass = 'medium';
-                    }
-                    ?>
-                    <li class="deadline-item">
-                        <div>
-                            <strong><?= sanitize($task['title']); ?></strong>
-                            <div class="task-meta">
-                                <span><?= sanitize($task['department_name']); ?></span>
-                                <span class="priority-badge <?= $priorityClass; ?>"><?= sanitize($task['priority']); ?></span>
+<div class="content-columns">
+    <div class="column-main">
+        <section class="panel classic-panel">
+            <header class="panel-header">
+                <h2>Upcoming deadlines</h2>
+                <span><?= $upcomingTasks ? count($upcomingTasks) : 0; ?> items scheduled</span>
+            </header>
+            <?php if (!$upcomingTasks): ?>
+                <div class="empty-note">No upcoming due dates on the books.</div>
+            <?php else: ?>
+                <ul class="stacked-list">
+                    <?php foreach ($upcomingTasks as $task): ?>
+                        <?php
+                        $priorityClass = strtolower($task['priority']);
+                        if (!in_array($priorityClass, ['high', 'medium', 'low'], true)) {
+                            $priorityClass = 'medium';
+                        }
+                        ?>
+                        <li class="stacked-item">
+                            <div class="item-main">
+                                <strong><?= sanitize($task['title']); ?></strong>
+                                <span class="item-sub"><?= sanitize($task['department_name']); ?></span>
                             </div>
-                        </div>
-                        <span class="badge warning">Due <?= sanitize(format_date($task['due_date'])); ?></span>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
-    </article>
-    <article class="panel">
-        <div class="panel-header">
-            <h2>Department Performance</h2>
-            <span class="panel-subtitle">Completion rate</span>
-        </div>
-        <?php if (!$departmentPerformance): ?>
-            <div class="empty-note">Add departments to track performance.</div>
-        <?php else: ?>
-            <ul class="performance-list">
-                <?php foreach ($departmentPerformance as $department): ?>
-                    <?php
-                    $total = (int)$department['total_tasks'];
-                    $completed = (int)$department['completed_tasks'];
-                    $inProgress = (int)$department['in_progress_tasks'];
-                    $overdue = (int)$department['overdue_tasks'];
-                    $rate = $total > 0 ? round(($completed / $total) * 100) : 0;
-                    ?>
-                    <li class="performance-row">
-                        <header>
-                            <strong><?= sanitize($department['name']); ?></strong>
-                            <span class="badge neutral"><?= $rate; ?>% complete</span>
-                        </header>
-                        <div class="progress-track">
-                            <span class="progress-fill" style="width: <?= $rate; ?>%"></span>
-                        </div>
-                        <div class="progress-meta">
-                            <span><?= number_format($completed); ?> completed · <?= number_format($inProgress); ?> in progress</span>
-                            <span><?= number_format($overdue); ?> overdue</span>
-                        </div>
-                    </li>
-                <?php endforeach; ?>
-            </ul>
-        <?php endif; ?>
-    </article>
-</section>
+                            <div class="item-meta">
+                                <span class="priority-chip <?= $priorityClass; ?>"><?= sanitize($task['priority']); ?></span>
+                                <span class="due-chip">Due <?= sanitize(format_date($task['due_date'])); ?></span>
+                            </div>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </section>
 
-<section class="panel">
-    <div class="panel-header">
-        <h2>Reminder Activity</h2>
-        <span class="panel-subtitle">Latest alerts to departments</span>
+        <section class="panel classic-panel">
+            <header class="panel-header">
+                <h2>Department performance</h2>
+                <span>Completion by division</span>
+            </header>
+            <?php if (!$departmentPerformance): ?>
+                <div class="empty-note">Add departments to begin tracking throughput.</div>
+            <?php else: ?>
+                <div class="table-scroll">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Department</th>
+                                <th scope="col">Completed</th>
+                                <th scope="col">In progress</th>
+                                <th scope="col">Overdue</th>
+                                <th scope="col">Completion rate</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($departmentPerformance as $department): ?>
+                                <?php
+                                $total = (int)$department['total_tasks'];
+                                $completed = (int)$department['completed_tasks'];
+                                $inProgress = (int)$department['in_progress_tasks'];
+                                $overdue = (int)$department['overdue_tasks'];
+                                $rate = $total > 0 ? round(($completed / max($total, 1)) * 100) : 0;
+                                ?>
+                                <tr>
+                                    <td><?= sanitize($department['name']); ?></td>
+                                    <td><?= number_format($completed); ?></td>
+                                    <td><?= number_format($inProgress); ?></td>
+                                    <td><?= number_format($overdue); ?></td>
+                                    <td>
+                                        <div class="progress-inline">
+                                            <span class="progress-bar" style="width: <?= $rate; ?>%"></span>
+                                        </div>
+                                        <span class="progress-label"><?= $rate; ?>%</span>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            <?php endif; ?>
+        </section>
     </div>
-    <?php if (!$recentReminders): ?>
-        <div class="empty-note">No reminders have been issued yet.</div>
-    <?php else: ?>
-        <ul class="activity-list">
-            <?php foreach ($recentReminders as $reminder): ?>
-                <li class="activity-item">
-                    <div>
-                        <strong><?= sanitize($reminder['task_title']); ?></strong>
-                        <div class="task-meta">
+    <aside class="column-side">
+        <?php if ($overdueTasks > 0): ?>
+            <section class="panel attention-panel">
+                <h2>Overdue follow-up</h2>
+                <p><?= number_format($overdueTasks); ?> assignments need intervention. Review the task list to re-align owners and deadlines.</p>
+                <a href="tasks.php" class="ghost-action">Go to tasks</a>
+            </section>
+        <?php endif; ?>
+
+        <section class="panel classic-panel">
+            <header class="panel-header">
+                <h2>Reminder activity</h2>
+                <span>Recent notices</span>
+            </header>
+            <?php if (!$recentReminders): ?>
+                <div class="empty-note">No reminders have been issued yet.</div>
+            <?php else: ?>
+                <ul class="activity-list">
+                    <?php foreach ($recentReminders as $reminder): ?>
+                        <li class="activity-item">
+                            <strong><?= sanitize($reminder['task_title']); ?></strong>
                             <span><?= sanitize($reminder['message']); ?></span>
-                        </div>
-                    </div>
-                    <span class="badge neutral"><?= sanitize($reminder['created_at']); ?></span>
-                </li>
-            <?php endforeach; ?>
-        </ul>
-    <?php endif; ?>
-</section>
+                            <time><?= sanitize($reminder['created_at']); ?></time>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            <?php endif; ?>
+        </section>
+    </aside>
+</div>
 <?php include __DIR__ . '/includes/footer.php'; ?>

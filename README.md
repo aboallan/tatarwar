@@ -1,36 +1,40 @@
-# Department Task Management System
+# Department TaskMaster Suite
 
-A lightweight web portal for coordinating departmental work. The interface is built with HTML, CSS, and JavaScript, while PHP powers the backend and connects the application to a MySQL database (compatible with MAMP on macOS).
+A classic, data-focused portal for coordinating departmental work. The interface uses HTML, CSS, and vanilla JavaScript, while PHP powers the backend against a MySQL database (fully compatible with MAMP on macOS).
 
 ## Key features
-- Dashboard with quick metrics, upcoming deadlines, and reminder history.
-- Dedicated new-task workspace for capturing assignments with guidance and shortcuts.
-- Calendar view that visualises deadlines across departments with colour-coded priorities.
-- Full CRUD workflow for departmental tasks (create, update status, delete).
-- Department directory with optional contact email and automatic seeding of the provided fourteen departments.
-- Reminder logging endpoint to record when a follow-up notification is sent.
-- Figma-inspired interface with gradient hero header, glassmorphism cards, and responsive insight chips for a polished presentation.
+- Secure authentication with role selection for Presidents, Managers, and Employees.
+- Dashboard with concise metrics, upcoming deadlines, and reminder history laid out in a classic two-column view.
+- Dedicated task creation workspace plus a streamlined task roster with inline status updates and reminder triggers.
+- Calendar view that visualises deadlines across departments with colour-coded priorities and monthly quick stats.
+- Department directory with optional contacts and workload summaries, seeded with the fourteen provided departments.
+- Reminder management page to create follow-up notices and review the log in a separate hub.
 
 ## Requirements
 - PHP 8 or newer.
-- MySQL server (the default MAMP database works well).
+- MySQL server (the default MAMP database works great).
 - Web server such as Apache bundled with MAMP.
 
 ## Getting started with MAMP
 1. Copy the project into your MAMP web directory (typically `/Applications/MAMP/htdocs`).
 2. Open phpMyAdmin through `http://localhost/phpMyAdmin`.
-3. Import the database schema located at `database/schema.sql`. It creates tables, seeds the fourteen departments, and loads curated sample data (including calendar events) so dashboards, boards, and the calendar are populated immediately.
+3. Import the database schema located at `database/schema.sql`. It creates tables, seeds departments, tasks, calendar events, notifications, and three demo user accounts.
 4. Update the connection values in `db.php` if your credentials differ. The defaults are:
    - Username: `root`
    - Password: `root`
    - Database: `task_manager`
-5. Start MAMP servers and visit `http://localhost/tatarwar/index.php` (or the folder name you chose) to access the portal.
+5. Start MAMP servers and visit `http://localhost/tatarwar/login.php` (or the folder name you chose).
+6. Sign in with one of the seeded accounts or create a new one from the registration page.
+   - President: `president@taskmaster.test` / `president123`
+   - Manager: `manager@taskmaster.test` / `manager123`
+   - Employee: `employee@taskmaster.test` / `employee123`
 
 ## Database structure
+- `users`: authentication table with role, hashed password, and audit timestamps.
 - `departments`: stores department names and optional email contacts.
 - `tasks`: tracks task details, responsible department, priority, status, and due date.
 - `notifications`: records reminder messages tied to tasks.
-- `calendar_events`: stores calendar items that power the new monthly schedule view.
+- `calendar_events`: stores calendar items that power the monthly schedule view.
 
 ## Project structure
 ```
@@ -46,22 +50,27 @@ A lightweight web portal for coordinating departmental work. The interface is bu
 │   ├── footer.php
 │   ├── functions.php
 │   └── header.php
-├── db.php
-├── index.php
-├── tasks.php
-├── task_create.php
 ├── calendar.php
+├── db.php
 ├── departments.php
+├── index.php
+├── login.php
+├── logout.php
+├── reminders.php
+├── register.php
+├── send_reminder.php
+├── task_create.php
+├── tasks.php
 └── README.md
 ```
 
-## Customising the platform
-- Update the colour palette or typography in `assets/css/style.css`.
-- Extend the reminder logic in `send_reminder.php` to trigger actual emails or integrations.
-- Modify the `departments.php` form to capture additional metadata as required.
+## Classic design accents
+- **Gradient shell:** requested linear gradient background paired with frosted surfaces for a timeless control room aesthetic.
+- **Summary cards & tables:** reusable cards and elevated tables keep numbers, statuses, and priorities easy to scan.
+- **Dedicated hubs:** separate screens for reminders and task creation make navigation straightforward while keeping the layout tidy.
+- **Responsive layout:** collapses gracefully on smaller screens while preserving the primary navigation and KPI highlights.
 
-## Design highlights
-- **Hero workspace shell:** layered linear-gradient background with live status chip and quick access to navigation plus a new task shortcut.
-- **Insight overview cards:** reusable components show task health, overdue counts, and department activity in a glanceable grid.
-- **Calendar-first visibility:** colour-coded events highlight due dates by department alongside quick stats, mirroring modern productivity suites.
-- **Elevated data tables:** floating rows, pill badges, and accent chips make task priorities and statuses readable across devices.
+## Customisation tips
+- Adjust typography, spacing, or palette inside `assets/css/style.css` to match your brand.
+- Extend reminder delivery in `send_reminder.php` to trigger emails, SMS, or chat integrations.
+- Capture additional metadata by expanding the forms in `task_create.php` or `departments.php` and updating the schema accordingly.

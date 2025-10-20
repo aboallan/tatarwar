@@ -1,7 +1,7 @@
             </main>
             <footer class="main-footer">
-                <span>© <?= date('Y'); ?> TaskFlow Workspace</span>
-                <span>Built for cross-department execution</span>
+                <span>© <?= date('Y'); ?> TaskMaster Coordination Suite</span>
+                <span>Keeping departments aligned with classic clarity</span>
             </footer>
         </div>
     </div>

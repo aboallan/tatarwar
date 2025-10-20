@@ -1,8 +1,9 @@
 <?php
 $pageTitle = 'Create Task';
 $pageDescription = 'Add a new assignment and notify the responsible department.';
-require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/includes/functions.php';
+require_login();
+require_once __DIR__ . '/db.php';
 
 $errors = [];
 $formData = [
@@ -60,23 +61,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 include __DIR__ . '/includes/header.php';
 ?>
-<section class="form-page">
-    <article class="panel form-primary">
-        <header class="form-header">
+<div class="content-columns form-layout">
+    <section class="panel classic-panel">
+        <header class="panel-header">
             <h2>Task details</h2>
-            <p>Provide enough context so departments can execute without delays.</p>
+            <span>Provide the essentials for a clear assignment</span>
         </header>
         <?php if ($errors): ?>
-            <div class="alert error">
-                <?= implode('<br>', array_map('sanitize', $errors)); ?>
-            </div>
+            <div class="alert error"><?= implode('<br>', array_map('sanitize', $errors)); ?></div>
         <?php endif; ?>
-        <form method="post" class="task-form" novalidate>
+        <form method="post" class="classic-form" novalidate>
             <div class="form-group">
                 <label for="title">Task title</label>
                 <input type="text" id="title" name="title" value="<?= sanitize($formData['title']); ?>" required placeholder="e.g. Update emergency drill playbook">
             </div>
-            <div class="form-grid">
+            <div class="form-row">
                 <div class="form-group">
                     <label for="department_id">Department</label>
                     <select id="department_id" name="department_id" required>
@@ -90,14 +89,11 @@ include __DIR__ . '/includes/header.php';
                 </div>
                 <div class="form-group">
                     <label for="priority">Priority</label>
-                    <div class="priority-pills">
+                    <select id="priority" name="priority">
                         <?php foreach (['High', 'Medium', 'Low'] as $priority): ?>
-                            <label class="pill-option">
-                                <input type="radio" name="priority" value="<?= $priority; ?>" <?= $formData['priority'] === $priority ? 'checked' : ''; ?>>
-                                <span><?= $priority; ?></span>
-                            </label>
+                            <option value="<?= $priority; ?>" <?= $formData['priority'] === $priority ? 'selected' : ''; ?>><?= $priority; ?></option>
                         <?php endforeach; ?>
-                    </div>
+                    </select>
                 </div>
                 <div class="form-group">
                     <label for="due_date">Due date</label>
@@ -106,25 +102,28 @@ include __DIR__ . '/includes/header.php';
             </div>
             <div class="form-group">
                 <label for="description">Brief</label>
-                <textarea id="description" name="description" rows="5" placeholder="Outline deliverables, attachments, and expected outcomes."><?= sanitize($formData['description']); ?></textarea>
+                <textarea id="description" name="description" rows="6" placeholder="Outline deliverables, attachments, and expected outcomes."><?= sanitize($formData['description']); ?></textarea>
             </div>
             <div class="form-actions">
                 <a href="tasks.php" class="ghost-action">Cancel</a>
                 <button type="submit" class="primary-action">Save task</button>
             </div>
         </form>
-    </article>
-    <aside class="panel form-sidebar">
-        <h2>Planning checklist</h2>
-        <ul class="form-tips">
+    </section>
+    <aside class="panel classic-panel">
+        <header class="panel-header">
+            <h2>Planning tips</h2>
+            <span>Keep departments aligned</span>
+        </header>
+        <ul class="insight-list">
             <li><strong>Set clear ownership:</strong> choose the department that will lead execution.</li>
-            <li><strong>Clarify urgency:</strong> use High for critical escalations, Medium for standard work, and Low for flexible items.</li>
-            <li><strong>Add due dates:</strong> deadlines power the new calendar view and trigger reminder insights.</li>
+            <li><strong>Clarify urgency:</strong> High for escalations, Medium for routine, Low for flexible work.</li>
+            <li><strong>Add due dates:</strong> deadlines power the calendar and reminder insights automatically.</li>
         </ul>
         <div class="calendar-preview">
             <span class="calendar-preview-month"><?= date('F Y'); ?></span>
-            <p>New tasks with due dates are automatically surfaced on the calendar.</p>
+            <p>New tasks with due dates appear on the shared calendar automatically.</p>
         </div>
     </aside>
-</section>
+</div>
 <?php include __DIR__ . '/includes/footer.php'; ?>

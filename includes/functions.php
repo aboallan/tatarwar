@@ -3,9 +3,62 @@ if (!ini_get('date.timezone')) {
     date_default_timezone_set('Asia/Riyadh');
 }
 
-function sanitize(string $value = null): string
+function ensure_session(): void
+{
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        session_start();
+    }
+}
+
+function sanitize(?string $value = null): string
 {
     return htmlspecialchars($value ?? '', ENT_QUOTES, 'UTF-8');
+}
+
+function current_user(): ?array
+{
+    ensure_session();
+    return $_SESSION['user'] ?? null;
+}
+
+function require_login(): array
+{
+    $user = current_user();
+    if (!$user) {
+        header('Location: login.php');
+        exit;
+    }
+
+    return $user;
+}
+
+function user_role_label(string $role): string
+{
+    return match (strtolower($role)) {
+        'president' => 'President',
+        'manager' => 'Manager',
+        'employee' => 'Employee',
+        default => ucfirst($role),
+    };
+}
+
+function set_flash(string $key, string $message): void
+{
+    ensure_session();
+    $_SESSION['flash'][$key] = $message;
+}
+
+function get_flash(string $key): ?string
+{
+    ensure_session();
+    if (!isset($_SESSION['flash'][$key])) {
+        return null;
+    }
+
+    $message = $_SESSION['flash'][$key];
+    unset($_SESSION['flash'][$key]);
+
+    return $message;
 }
 
 function analyze_due_status(?string $dueDate, string $status = 'In Progress'): array

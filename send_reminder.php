@@ -1,6 +1,15 @@
 <?php
 header('Content-Type: application/json; charset=utf-8');
 
+require_once __DIR__ . '/includes/functions.php';
+ensure_session();
+
+if (!current_user()) {
+    http_response_code(403);
+    echo json_encode(['message' => 'Authentication required']);
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(['message' => 'Request method not allowed']);
@@ -28,7 +37,8 @@ if (!$task) {
     exit;
 }
 
-$message = sprintf('Reminder for task "%s". Due date: %s', $task['title'], $task['due_date'] ?: 'No due date');
+$formattedDueDate = $task['due_date'] ?: 'No due date';
+$message = sprintf('Reminder for task "%s". Due date: %s', $task['title'], $formattedDueDate);
 
 $insert = $pdo->prepare('INSERT INTO notifications (task_id, message, created_at) VALUES (:task_id, :message, NOW())');
 $insert->execute([

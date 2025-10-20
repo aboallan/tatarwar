@@ -1,8 +1,9 @@
 <?php
 $pageTitle = 'Departments';
-$pageDescription = 'Manage departments and view their task performance.';
-require_once __DIR__ . '/db.php';
+$pageDescription = 'Maintain department records and workload summaries.';
 require_once __DIR__ . '/includes/functions.php';
+require_login();
+require_once __DIR__ . '/db.php';
 
 $errors = [];
 $success = '';
@@ -76,100 +77,103 @@ foreach ($departments as $department) {
 
 include __DIR__ . '/includes/header.php';
 ?>
-<section class="metrics-grid">
-    <article class="panel metric-card">
-        <span class="metric-label">Active units</span>
-        <span class="metric-value"><?= number_format($totalDepartments); ?></span>
-        <span class="metric-footnote">Participating in the workspace</span>
+<?php if ($success && !$errors): ?>
+    <div class="alert success global-alert"><?= sanitize($success); ?></div>
+<?php endif; ?>
+<?php if ($errors): ?>
+    <div class="alert error global-alert">
+        <?= implode('<br>', array_map('sanitize', $errors)); ?>
+    </div>
+<?php endif; ?>
+<section class="summary-cards">
+    <article class="summary-card">
+        <span class="summary-label">Active units</span>
+        <span class="summary-value"><?= number_format($totalDepartments); ?></span>
+        <span class="summary-footnote">Participating in the workspace</span>
     </article>
-    <article class="panel metric-card">
-        <span class="metric-label">Contacts listed</span>
-        <span class="metric-value"><?= number_format($withContacts); ?></span>
-        <span class="metric-footnote">Teams with escalation emails</span>
+    <article class="summary-card">
+        <span class="summary-label">Contacts listed</span>
+        <span class="summary-value"><?= number_format($withContacts); ?></span>
+        <span class="summary-footnote">Teams with escalation emails</span>
     </article>
-    <article class="panel metric-card">
-        <span class="metric-label">Active workloads</span>
-        <span class="metric-value"><?= number_format($activeWorkloads); ?></span>
-        <span class="metric-footnote">Departments with assigned tasks</span>
+    <article class="summary-card">
+        <span class="summary-label">Active workloads</span>
+        <span class="summary-value"><?= number_format($activeWorkloads); ?></span>
+        <span class="summary-footnote">Departments with assigned tasks</span>
     </article>
 </section>
 
-<section class="panel form-panel">
-    <h2>Add Department</h2>
-    <p class="panel-subtitle">Create a new department to assign work</p>
-    <?php if ($errors): ?>
-        <div class="alert error">
-            <?= implode('<br>', array_map('sanitize', $errors)); ?>
+<section class="panel classic-panel">
+    <header class="panel-header">
+        <h2>Add department</h2>
+        <span>Create a new division record</span>
+    </header>
+    <form method="post" class="classic-form">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="name">Department name</label>
+                <input type="text" id="name" name="name" required placeholder="e.g. Transportation Affairs">
+            </div>
+            <div class="form-group">
+                <label for="email">Email (optional)</label>
+                <input type="email" id="email" name="email" placeholder="team@example.com">
+            </div>
         </div>
-    <?php endif; ?>
-    <?php if ($success && !$errors): ?>
-        <div class="alert success"><?= sanitize($success); ?></div>
-    <?php endif; ?>
-    <form method="post">
-        <div>
-            <label for="name">Department name</label>
-            <input type="text" id="name" name="name" required>
+        <div class="form-actions">
+            <button type="submit" class="primary-action">Add department</button>
         </div>
-        <div>
-            <label for="email">Email (optional)</label>
-            <input type="email" id="email" name="email" placeholder="team@example.com">
-        </div>
-        <button type="submit">Add department</button>
     </form>
 </section>
 
-<section class="department-grid">
+<section class="panel classic-panel">
+    <header class="panel-header">
+        <h2>Department directory</h2>
+        <span>Task distribution by team</span>
+    </header>
     <?php if (!$departments): ?>
-        <div class="panel empty-note">No departments available. Add one to get started.</div>
+        <div class="empty-note">No departments available. Add one to get started.</div>
     <?php else: ?>
-        <?php $colors = ['blue', 'pink', 'orange', 'green', 'yellow']; ?>
-        <?php foreach ($departments as $index => $department): ?>
-            <?php
-            $totalTasks = (int)$department['tasks_count'];
-            $completed = (int)$department['completed_count'];
-            $inProgress = (int)$department['in_progress_count'];
-            $pending = (int)$department['pending_count'];
-            $overdue = (int)$department['overdue_count'];
-            $rate = $totalTasks > 0 ? round(($completed / $totalTasks) * 100) : 0;
-            $color = $colors[$index % count($colors)];
-            ?>
-            <article class="panel department-card">
-                <div class="department-header">
-                    <div class="department-identity">
-                        <span class="department-dot <?= $color; ?>" aria-hidden="true"></span>
-                        <div>
-                            <h2><?= sanitize($department['name']); ?></h2>
-                            <p><?= $department['email'] ? sanitize($department['email']) : 'No contact listed'; ?></p>
-                        </div>
-                    </div>
-                    <span class="badge neutral"><?= number_format($totalTasks); ?> tasks</span>
-                </div>
-                <div class="department-stats">
-                    <div>
-                        <span><?= number_format($pending); ?></span>
-                        Pending
-                    </div>
-                    <div>
-                        <span><?= number_format($inProgress); ?></span>
-                        In progress
-                    </div>
-                    <div>
-                        <span><?= number_format($completed); ?></span>
-                        Completed
-                    </div>
-                    <div>
-                        <span><?= number_format($overdue); ?></span>
-                        Overdue
-                    </div>
-                </div>
-                <div class="progress-wrap">
-                    <div class="progress-track">
-                        <span class="progress-fill" style="width: <?= $rate; ?>%"></span>
-                    </div>
-                    <span class="progress-label">Completion rate <?= $rate; ?>%</span>
-                </div>
-            </article>
-        <?php endforeach; ?>
+        <div class="table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Department</th>
+                        <th scope="col">Contact</th>
+                        <th scope="col">Pending</th>
+                        <th scope="col">In progress</th>
+                        <th scope="col">Completed</th>
+                        <th scope="col">Overdue</th>
+                        <th scope="col">Completion rate</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($departments as $department): ?>
+                        <?php
+                        $totalTasks = (int)$department['tasks_count'];
+                        $completed = (int)$department['completed_count'];
+                        $inProgress = (int)$department['in_progress_count'];
+                        $pending = (int)$department['pending_count'];
+                        $overdue = (int)$department['overdue_count'];
+                        $rate = $totalTasks > 0 ? round(($completed / max($totalTasks, 1)) * 100) : 0;
+                        ?>
+                        <tr>
+                            <td><?= sanitize($department['name']); ?></td>
+                            <td><?= $department['email'] ? sanitize($department['email']) : '—'; ?></td>
+                            <td><?= number_format($pending); ?></td>
+                            <td><?= number_format($inProgress); ?></td>
+                            <td><?= number_format($completed); ?></td>
+                            <td><?= number_format($overdue); ?></td>
+                            <td>
+                                <div class="progress-inline">
+                                    <span class="progress-bar" style="width: <?= $rate; ?>%"></span>
+                                </div>
+                                <span class="progress-label"><?= $rate; ?>%</span>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
     <?php endif; ?>
 </section>
 <?php include __DIR__ . '/includes/footer.php'; ?>

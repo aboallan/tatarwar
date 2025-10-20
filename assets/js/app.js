@@ -17,6 +17,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.reminder-button').forEach(button => {
         button.addEventListener('click', async () => {
             const taskId = button.dataset.taskId;
+            const targetSelector = button.dataset.target;
+            const target = targetSelector ? document.querySelector(targetSelector) : null;
+
             button.disabled = true;
             try {
                 const response = await fetch('send_reminder.php', {
@@ -28,9 +31,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const result = await response.json();
                 if (response.ok) {
                     showToast(result.message, 'success');
-                    const stamp = button.closest('.task-card')?.querySelector('.reminder-stamp');
-                    if (stamp) {
-                        stamp.textContent = result.lastReminder;
+                    if (target && result.lastReminder) {
+                        target.textContent = result.lastReminder;
                     }
                 } else {
                     throw new Error(result.message || 'Unable to send reminder');
