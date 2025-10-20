@@ -68,6 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </ul>
         </section>
         <div class="auth-card">
+            <div class="auth-logo">
+                <img src="assets/img/hail-region-municipality-logo.svg" alt="Hail Region Municipality logo">
+            </div>
             <h2>Welcome back</h2>
             <p>Sign in to continue coordinating tasks.</p>
         <?php if ($registeredMessage): ?>

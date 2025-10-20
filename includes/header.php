@@ -32,7 +32,7 @@ $userRole = isset($currentUser['role']) ? user_role_label($currentUser['role']) 
     <div class="app-shell">
         <aside class="sidebar" aria-label="Primary">
             <div class="sidebar-brand">
-                <span class="brand-icon" aria-hidden="true">HM</span>
+                <img src="assets/img/hail-region-municipality-logo.svg" alt="Hail Region Municipality" class="brand-logo">
                 <div class="brand-copy">
                     <span class="brand-title">Task Management</span>
                     <span class="brand-subtitle">Hail Region Municipality</span>
